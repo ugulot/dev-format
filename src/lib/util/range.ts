@@ -1,5 +1,5 @@
 import { p } from '@tags/p'
-import { split } from './unicode'
+import { split } from './type/unicode'
 
 export interface RangeOptions<T> {
   /**
@@ -44,8 +44,6 @@ export function defaultValueToNumber<T>(value: T) {
     if (zeroCharacters || multipleCharacters) {
       throw new TypeError(p`
         Element of range should be a string that contains only single Unicode symbol.
-        ${(zeroCharacters || null) && ''}
-        ${}
         Combining Unicode characters are not allowed in a range.
       `)
     }
@@ -76,11 +74,8 @@ export function defaultNumberToValue<T>(number: number | bigint, type: string | 
     return String.fromCodePoint(number)
   }
 
-  if (typeof type === 'function') {
-    const constructor = type
-    if (constructor === Date) {
-      return Date.
-    }
+  if (typeof type === 'function' && type === Date) {
+    return new Date(number)
   }
 
   throw new TypeError(p`
@@ -94,19 +89,19 @@ export function defaultNumberToValue<T>(number: number | bigint, type: string | 
  * console.log([...range(1, 5)])
  * // [1, 2, 3, 4, 5]
  * ```
- * 
+ *
  * @example Range with step = 2
  * ```
  * console.log([...range(10, 20, { step: 2 })])
  * // [10, 12, 14, 16, 18, 20]
  * ```
- * 
+ *
  * @example Range that not includes end value
  * ```
  * console.log([...range(1, 5, { endIncluded: false })])
  * // [1, 2, 3, 4]
  * ```
- * 
+ *
  * @example Range of Unicode symbols
  * ```
  * console.log([...range('a', 'd')])
@@ -122,12 +117,12 @@ export function* range<T>(
     endIncluded,
     valueToNumber = defaultValueToNumber<T>,
     numberToValue = defaultNumberToValue<T>,
-  }: RangeOptions<T> & IndexedValueRangeOptionsVariant<T> = {}
+  }: RangeOptions<T> & IndexedValueRangeOptionsVariant<T> = {},
 ) {
   const sign = valueToNumber(end) - valueToNumber(start) >= 0 ? 1 : -1
   const finalStep = sign * Math.abs(step)
 
-  const constructor = Object.getPrototypeOf(start).constructor
+  const { constructor } = Object.getPrototypeOf(start)
   const validateValueClass = (value: T) => {
     if (Object.getPrototypeOf(value).constructor !== constructor) {
       throw new TypeError(p`
@@ -138,16 +133,13 @@ export function* range<T>(
 
   validateValueClass(Object.getPrototypeOf(end).constructor)
 
-  const nextValue = <T>(value: T) => {
-    const increment = value + step
-    return 
-  }
-
   for (
-    let value = startIncluded ? valueToNumber(start) : startIncluded + start;
-    start <= ;
-    value += finalStep
+    let number = valueToNumber(start) + (startIncluded ? 0 : finalStep);
+    sign === -1 ?
+      number >= valueToNumber(end) - (endIncluded ? 0 : finalStep) :
+      number <= valueToNumber(end) - (endIncluded ? 0 : finalStep);
+    number += step
   ) {
-
+    yield numberToValue(number)
   }
 }

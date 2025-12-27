@@ -20,9 +20,6 @@ describe(`${code.name}() (tagged template handle)`, () => {
         expect(prepareConsts(['abc\ndef', 'xyz'])).toEqual(['abc', 'def', 'xyz'])
       })
       it('3', () => {
-        console.log({ xyz: prepareConsts`
-          abc
-        ` })
         expect(prepareConsts`
           abc${null}klmn${null}xyz
           ${null}

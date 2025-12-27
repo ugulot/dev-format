@@ -1,6 +1,6 @@
 import { configurableTag } from '@lib/tag/configurable-tag'
 import { isNonNullish } from '@lib/util/type/nullable'
-import { range } from '@lib/util/type/range'
+import { range } from '@lib/util/range'
 import type { RegExpPartFlags } from '@lib/util/type/regexp'
 
 export const UL_DEFAULT_OPTIONS = {
