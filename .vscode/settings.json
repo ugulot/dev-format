@@ -2,5 +2,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
   },
+  "markdown.validate.enabled": true,
+  "markdown.validate.fileLinks.enabled": "error",
   "typescript.tsdk": "node_modules/typescript/lib",
 }
