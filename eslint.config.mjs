@@ -29,7 +29,7 @@ export default defineConfig(
       '@stylistic/comma-dangle': ['error', 'always-multiline'],
       '@stylistic/new-parens': 'off',
       '@stylistic/no-extra-semi': 'error',
-      '@stylistic/no-extra-parens': ['error', 'all'],
+      '@stylistic/no-extra-parens': ['error', 'all', { conditionalAssign: false }],
       '@stylistic/no-mixed-operators': 'off',
       '@stylistic/generator-star-spacing': ['error', {
         before: false,
