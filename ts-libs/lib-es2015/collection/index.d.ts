@@ -144,3 +144,17 @@ interface WeakSetConstructor {
   readonly prototype: WeakSet<WeakKey>
 }
 declare var WeakSet: WeakSetConstructor
+
+interface ObjectConstructor {
+  /**
+   * Prevents the modification of existing property attributes and values, and prevents the addition of new properties.
+   * @param o Object on which to lock the attributes.
+   */
+  freeze<T>(o: Set<T>): ReadonlySet<T>
+
+  /**
+   * Prevents the modification of existing property attributes and values, and prevents the addition of new properties.
+   * @param o Object on which to lock the attributes.
+   */
+  freeze<K, V>(o: Map<K, V>): ReadonlyMap<K, V>
+}
