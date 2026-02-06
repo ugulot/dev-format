@@ -3,15 +3,26 @@ import {
   type ReassembleTaggedStringOptions,
   reassembleTaggedString,
 } from '@lib/util/type/template-literal'
+import { regexp } from './regexp'
 
-/** Optional whitespace pattern */
-const WS = /\s+/g
-/** Optional whitespace pattern */
-const OWS = /\s*/g
-/** New line pattern */
-const NL = /(?:\r\n|\r|\n)/g
-/** New paragraph pattern */
-const NP = new RegExp(`${OWS.source}${NL.source}${OWS.source}${NL.source}${OWS.source}`, 'g')
+const PATTERNS = {
+  /** Optional whitespace pattern */
+  WS: /\s+/g,
+
+  /** Optional whitespace pattern */
+  OWS: /\s*/g,
+
+  /** New line pattern */
+  NL: /(?:\r\n|\r|\n)/g,
+
+  /** New paragraph pattern */
+  get NP() {
+    // a getter is necessary because "p" and "regexp" are cyclically dependent
+    // on each other
+    const { OWS, NL } = this
+    return regexp({ flags: 'g' })`${OWS}${NL}${OWS}${NL}${OWS}`
+  },
+}
 
 const SPACE = '\u0020'
 
@@ -41,6 +52,7 @@ const endWsToS = (string: string) => {
 export const p = configurableTag({
   newLineSequence: '\n',
 }, ({ newLineSequence }, consts, ...args) => {
+  const { WS, NL, NP } = PATTERNS
   const newParagraphSequence = `${newLineSequence}${newLineSequence}`
 
   const processArg: ReassembleTaggedStringOptions['processArg'] =
