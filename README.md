@@ -9,27 +9,21 @@ A TypeScript micro-library that provides functions for constructing text strings
 3. Remove the excessive indentation, which is used to match the indentation of the outer code;
 4. Tags may have options.
 
-<div id="p"></div>
-
 ## Tag `p`
 
 `p` constructs a paragraph from any text inside. Line breaks and excessive indentation will be removed.
 
 <!-- TODO: add example -->
 
-<div id="pre-and-code"></div>
-
-## Tags `pre` and `code`
-
-<div id="pre"></div>
+## Tag `pre`
 
 `pre`
 
 <!-- TODO: add example -->
 
-<div id="code"></div>
+## Tag `code`
 
-`code` is like [`pre`](#pre) but behaves like [`String.raw()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/raw).
+`code` is like [`pre`](#tag-pre) but behaves like [`String.raw()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/raw).
 
 “Grave Accent” symbol and `${` should be escaped.
 
