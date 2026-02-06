@@ -1,3 +1,4 @@
+import escape from 'core-js-pure/es/regexp/escape'
 import { configurableTag } from '@lib/tag/configurable-tag'
 import { reassembleTaggedString } from '@lib/util/type/template-literal'
 import { p } from './p'
@@ -32,7 +33,7 @@ export const regexp = configurableTag({
         return arg.source
       }
 
-      return String(arg)
+      return escape(String(arg))
     },
   })
 

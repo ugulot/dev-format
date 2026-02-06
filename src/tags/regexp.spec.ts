@@ -47,4 +47,26 @@ describe(`regexp\`...\``, () => {
       expect(() => regexp({ flags: 'i' })`${l}${l}-${d}${d}${d}${d}`).not.toThrowError()
     }
   })
+
+  it('escapes input data', () => {
+    const firstName = 'Alex'
+    const fullName = `${firstName} Jones`
+    const data = `name=${fullName},password=SECRET`
+
+    const unsafeFindFullName = (firstName: string) => {
+      const dataPattern = new RegExp(`name=(${firstName}[^,]*)`)
+      return dataPattern.exec(data)?.[1]
+    }
+
+    const safeFindFullName = (firstName: string) => {
+      const dataPattern = regexp`name=(${firstName}[^,]*)`
+      return dataPattern.exec(data)?.[1]
+    }
+
+    const firstNameWithInjection = 'Alex.*'
+
+    expect(safeFindFullName(firstName)).toStrictEqual(unsafeFindFullName(firstName))
+    expect(unsafeFindFullName(firstNameWithInjection) ?? '').includes('SECRET')
+    expect(safeFindFullName(firstNameWithInjection) ?? '').not.includes('SECRET')
+  })
 })
