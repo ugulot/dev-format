@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { regexp } from './regexp'
 
 describe(`regexp\`...\``, () => {
-  it('creates RegExp instance from template literal', () => {
+  it('allows to insert RegExp as argument of template literal', () => {
     const letter = /[A-Z]/
     const digit = /[0-9]/
     const { letter: l, digit: d } = { letter, digit }
@@ -11,6 +11,15 @@ describe(`regexp\`...\``, () => {
 
     expect(serialNumber.test('AB-1234')).toStrictEqual(true)
     expect(serialNumber.test('AB-123A')).toStrictEqual(false)
+  })
+
+  it('allows to use any other data (not only RegExp) as argument', () => {
+    const prefix = 'RTX'
+    const model = { toString: () => '5090' }
+    const memory = 32
+    const productName = regexp`${prefix} ${model} ${memory}GB`
+
+    expect(productName.test('RTX 5090 32GB')).toBe(true)
   })
 
   it('prevents inserting of RegExp with incompatible flags', () => {
