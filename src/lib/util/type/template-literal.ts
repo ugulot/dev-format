@@ -8,6 +8,52 @@ export const isTemplateStringsArray = (
     Array.isArray(value) && 'raw' in value && Array.isArray(value.raw)
 ) satisfies Predicate<unknown>
 
-export function reassembleTaggedString<Args extends unknown[]>(consts: readonly string[], ...args: Args): string {
-  return consts.reduce((result, s, i) => result + s + (args[i] ?? ''), '')
+export interface ProcessContext<Arg> {
+  readonly i: number
+  readonly consts: TemplateStringsArray
+  readonly args: readonly Arg[]
+}
+
+export interface ProcessContextArg<Arg> extends ProcessContext<Arg> {}
+
+export interface ProcessContextConst<Arg> extends ProcessContext<Arg> {
+  readonly raw: string
+}
+
+export interface ReassembleTaggedStringOptions<Arg = unknown> {
+  readonly raw?: boolean
+  readonly processArg?: (arg: Arg, context: ProcessContextArg<Arg>) => string
+  readonly processConst?: (constPart: string, context: ProcessContextConst<Arg>) => string
+}
+
+export const useRaw: ReassembleTaggedStringOptions['processConst'] = (_, { raw }) => raw
+
+export function reassembleTaggedString<Arg>(
+  consts: TemplateStringsArray,
+  args: readonly Arg[] = [],
+  {
+    processArg = arg => `${arg}`,
+    processConst = constPart => constPart,
+  }: ReassembleTaggedStringOptions<Arg> = {},
+): string {
+  const processedArgs = args.map((arg, i) => processArg(arg, { i, args, consts }))
+
+  return consts.reduce(
+    (result, s, i) => {
+      const processedConst = processConst(
+        s,
+        {
+          i,
+          get raw() {
+            return this.consts[this.i]
+          },
+          consts,
+          args,
+        },
+      )
+
+      return result + processedConst + (processedArgs[i] ?? '')
+    },
+    '',
+  )
 }

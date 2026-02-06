@@ -1,34 +1,46 @@
 import { describe, it, expect } from 'vitest'
-import { isTemplateStringsArray, reassembleTaggedString } from './template-literal'
-
-describe(`${isTemplateStringsArray.name}()`, () => {
-  it('returns true for "consts" argument of template string tag', () => {
-    const getConsts = (
-      consts: TemplateStringsArray,
-      ..._args: readonly unknown[]
-    ) => consts
-
-    expect(isTemplateStringsArray(getConsts``)).toBe(true)
-    expect(isTemplateStringsArray(getConsts`abc`)).toBe(true)
-    expect(isTemplateStringsArray(getConsts`abc${'def'}`)).toBe(true)
-    expect(isTemplateStringsArray(getConsts`abc${'def'}ghi`)).toBe(true)
-    expect(isTemplateStringsArray(getConsts`${'abc'}def${'ghi'}`)).toBe(true)
-  })
-
-  it('returns false otherwise', () => {
-    expect(isTemplateStringsArray([])).toBe(false)
-    expect(isTemplateStringsArray(['abc'])).toBe(false)
-    expect(isTemplateStringsArray(['abc', 'def'])).toBe(false)
-    expect(isTemplateStringsArray('')).toBe(false)
-    expect(isTemplateStringsArray('abc')).toBe(false)
-  })
-})
+import { reassembleTaggedString, type ReassembleTaggedStringOptions } from './template-literal'
+import { tag } from '@lib/tag/tag'
 
 describe(`${reassembleTaggedString.name}()`, () => {
-  it('', () => {
-    expect(reassembleTaggedString`One two three`).toBe('One two three')
-    expect(reassembleTaggedString`${'One'} two three`).toBe('One two three')
-    expect(reassembleTaggedString`One ${'two'} three`).toBe('One two three')
-    expect(reassembleTaggedString`One two ${'three'}`).toBe('One two three')
+  const disassemble = tag((consts, ...args) => ({ consts, args }))
+
+  it('assemble simple ', () => {
+    {
+      const { consts, args } = disassemble`ab${123}cd${456}ef`
+      expect(reassembleTaggedString(consts, args)).toStrictEqual('ab123cd456ef')
+    }
+
+    {
+      const { consts, args } = disassemble`${0}ab${123}cd${456}ef`
+      expect(reassembleTaggedString(consts, args)).toStrictEqual('0ab123cd456ef')
+    }
+
+    {
+      const { consts, args } = disassemble`ab${123}cd${456}ef${789}`
+      expect(reassembleTaggedString(consts, args)).toStrictEqual('ab123cd456ef789')
+    }
+  })
+
+  it('option "processArg" allows to replace argument based on the context', () => {
+    {
+      const processArg: ReassembleTaggedStringOptions['processArg'] =
+        arg => `${arg ?? ''}`
+      const { consts, args } = disassemble`ab${123}cd${456}ef${null}gh${undefined}ij`
+      expect(reassembleTaggedString(consts, args, { processArg })).toStrictEqual('ab123cd456efghij')
+    }
+
+    {
+      const processArg: ReassembleTaggedStringOptions['processArg'] =
+        (arg, { i, consts }) => consts[i]?.endsWith('@') ? String(arg ?? '').toLowerCase() : String(arg ?? '')
+
+      const userName = 'Alex123'
+      const { consts, args } = disassemble`Hello @${userName}`
+      expect(reassembleTaggedString(consts, args, { processArg })).toStrictEqual('Hello @alex123')
+    }
+  })
+
+  it('option "processConst" allows to replace constant part based on the context', { todo: true }, () => {
+
   })
 })

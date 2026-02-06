@@ -3,12 +3,9 @@
     "target": "es2020",
     "module": "esnext",
     "moduleResolution": "bundler",
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
+    "outDir": "dist",
     "lib": ["ESNext"],
-    "typeRoots": [
-      "./node_modules/@types",
-    ],
+    "libReplacement": true,
     "paths": {
       "@lib/*": ["./src/lib/*"],
       "@tags/*": ["./src/tags/*"]
@@ -16,6 +13,8 @@
     "useDefineForClassFields": true,
     "resolveJsonModule": true,
     "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "declaration": true,
     "sourceMap": true,
     "strict": true,
     "noUncheckedIndexedAccess": true,
@@ -24,11 +23,11 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": false,
-    "isolatedModules": true,
-    "experimentalDecorators": true,
+    "experimentalDecorators": true
   },
   "include": [
     "src/**/*.ts",
-    "src/**/*.d.ts",
-  ]
+    "src/**/*.d.ts"
+  ],
+  "exclude": ["ts-libs"]
 }

@@ -2,64 +2,43 @@ import type { Tag } from './tag'
 import {
   type NonTemplateStringsArray,
   isTemplateStringsArray,
-} from '../util/type/template-literal'
+} from '@lib/util/type/template-literal'
 
-export interface ConfigurableTag<Arg, Returned, Options> extends Tag<Arg, Returned> {
-  (options: NonTemplateStringsArray<Options>): Tag<Arg, Returned>
+export interface ConfigurableTag<
+  Args extends readonly unknown[] = readonly unknown[],
+  Returned = unknown,
+  Options = {},
+> {
+  (consts: TemplateStringsArray, ...args: Args): Returned
+  (options: NonTemplateStringsArray<Options>): Tag<Args, Returned>
 }
 
-/**
- * @example
- * ```
- * const tag = tagWithOptions({
- *   digitsOnly: false,
- * }, ({ digitsOnly }, consts, ...args) => {
- *   const result = reassembleTaggedString(consts, ...args)
- *
- *   if (digitsOnly && !/^\d*$/.test(result)) {
- *     throw new TypeError
- *   }
- *
- *   return result
- * })
- *
- * {
- *   let catchedError: Error | undefined
- *   try {
- *     console.log(tag`T1000`)
- *   } catch (error) {
- *     catchedError = error
- *   } finally {
- *     console.assert(catchedError === undefined)
- *   }
- * }
- *
- * {
- *   let catchedError: Error | undefined
- *   try {
- *     console.log(tag({ digitsOnly: true })`T1000`)
- *   } catch (error) {
- *     catchedError = error
- *   } finally {
- *     console.assert(catchedError instanceof Error)
- *   }
- * }
- * ```
- */
-export function configurableTag<Arg, Returned, Options>(
-  defaultOptions: NonTemplateStringsArray<Options>,
-  handle: (options: Options, consts: TemplateStringsArray, ...args: readonly Arg[]) => Returned,
-): ConfigurableTag<Arg, Returned, Options> {
+export function configurableTag<
+  const Args extends readonly unknown[],
+  Returned,
+  const Options extends object,
+>(
+  options: NonTemplateStringsArray<Options>,
+  handle: (options: Options, consts: TemplateStringsArray, ...args: Args) => Returned,
+): ConfigurableTag<Args, Returned, Options> {
   return tag
 
-  function tag(consts: TemplateStringsArray, ...args: readonly Arg[]): Returned
-  function tag(options: NonTemplateStringsArray<Options>): Tag<Arg, Returned>
-  function tag(first: TemplateStringsArray | Options, ...rest: readonly Arg[]) {
-    if (isTemplateStringsArray(first)) {
-      return handle(defaultOptions, first, ...rest)
+  function tag(consts: TemplateStringsArray, ...args: Args): Returned
+  function tag(options: Options): Tag<Args, Returned>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function tag(firstArg: any, ...restArgs: any) {
+    if (isTemplateStringsArray(firstArg)) {
+      const consts = firstArg
+      const args = restArgs
+
+      return handle(options, consts, ...args)
     }
     else {
-      return (consts: TemplateStringsArray, ...args: readonly Arg[]) => handle(first, consts, ...args)
+      const options = firstArg
+      const tag = (consts: TemplateStringsArray, ...args: Args) =>
+        handle(options, consts, ...args)
+
+      return tag
     }
   }
 }

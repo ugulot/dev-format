@@ -7,80 +7,76 @@ A TypeScript micro-library that provides functions for constructing text strings
 1. Use a tagged template literals;
 2. Skip `null`, `undefined` and `''` arguments;
 3. Remove the excessive indentation, which is used to match the indentation of the outer code;
-4. Some tags may have options.
+4. Tags may have options.
 
-### Tag
+<div id="p"></div>
 
-<!-- TODO: add description -->
-
-```ts
-interface Tag<Arg, Returned> {
-  (consts: TemplateStringsArray, ...args: readonly Arg[]): Returned
-}
-```
-
-### Universal Tag
-
-<!-- TODO: add description -->
-
-```ts
-interface UnivesalTag<Arg, Returned> extends Tag<Arg, Returned> {
-  (...sentences: Arg): Returned
-  (content: Arg): Returned
-}
-```
-
-```ts
-declare const universalTag = (tag: UniveralTag<T>)
-```
-
-`universalTag()` defines a new univesal tag function.
-
-### Tag with Options
-
-<!-- TODO: add description -->
-
-`tagWithOptions()`
-
-```ts
-interface TagWithOptions<Arg, Returned, Options> extends Tag<Arg, Returned> {
-  (options: NonTemplateStringsArray<Options>): Tag<Arg, Returned>
-}
-```
-
-## Tags `p`, `div`, `section`
-
-<a href="#p"></a>
-### `p`
+## Tag `p`
 
 `p` constructs a paragraph from any text inside. Line breaks and excessive indentation will be removed.
 
 <!-- TODO: add example -->
 
-<a href="#div"></a>
-### `div`
-
-`div`
-
-<!-- TODO: add example -->
-
-<a href="#section"></a>
-### `section`
-
-<!-- TODO: add example -->
+<div id="pre-and-code"></div>
 
 ## Tags `pre` and `code`
 
-<a href="#pre"></a>
-### `pre`
+<div id="pre"></div>
+
+`pre`
 
 <!-- TODO: add example -->
 
-<a href="#code"></a>
-### `code`
+<div id="code"></div>
 
-Same as [`pre`](#pre) but behaves like [`String.raw()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/raw).
+`code` is like [`pre`](#pre) but behaves like [`String.raw()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/raw).
 
-<!-- TODO: add example -->
+“Grave Accent” symbol and `${` should be escaped.
 
-#### Options
+```ts
+const fragment = code`
+  const fn = code\`
+    function fn(a, b) {
+      return a + b
+    }
+  \`
+`
+```
+
+```ts
+const generatedCode = code`
+  ${import('./code').fn}
+`
+```
+
+## Examples
+
+```ts
+import { bound } from 'dev-format/tags/bound.ts'
+import { p } from 'dev-format/tags/p.ts'
+
+function letter(recipientName?: string) {
+  return p`
+    Hello${bound`, dear ${recipientName}`}!
+    How are you?
+
+    We look forward to seeing you...
+  `
+}
+
+console.assert(
+  letter() === p`
+    Hello!
+
+    We look forward to seeing you...
+  `
+)
+
+console.assert(
+  letter('Alex') === p`
+    Hello, dear Alex!
+
+    We look forward to seeing you...
+  `
+)
+```

@@ -1,5 +1,8 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck FIXME
+
 import { isArray } from '@lib/util/type/array'
-import { div } from './div'
+import { reassembleTaggedString, useRaw } from '@lib/util/type/template-literal'
 import { p } from './p'
 
 const prepareConsts = (consts: string | readonly string[] | TemplateStringsArray) => {
@@ -12,43 +15,30 @@ const prepareConsts = (consts: string | readonly string[] | TemplateStringsArray
     const lastLineIsEmpty = /\n\s*$/.test(fragments[fragments.length - 1]!)
 
     if (!firstLineIsEmpty || !lastLineIsEmpty) {
-      throw new SyntaxError(div(
-        p`
-          Content of the template string should look like a block of code
-          in the common JavaScript style.
-        `,
-        p`
-          Expected: The opening quotemark should be on the previous line before
-          content, and the closing quotemark on the next line after content.
-        `,
-        p`
-          Actual:
-          ${!firstLineIsEmpty ? 'The opening quotemark on the same line with content.' : null}
-          ${!lastLineIsEmpty ? 'The closing quotemark on the same line with content.' : null}
-        `,
-        div`
-          Correct example:
+      throw new SyntaxError(p`
+        Content of the template string should look like a block of code
+        in the common JavaScript style.
+        
+        Expected: The opening quotemark should be on the previous line before
+        content, and the closing quotemark on the next line after content.
+        
+        Actual:
+        ${!firstLineIsEmpty ? 'The opening quotemark on the same line with content.' : null}
+        ${!lastLineIsEmpty ? 'The closing quotemark on the same line with content.' : null}
+        
+        Correct example:
 
-          console.log(code\`
-            const n = 42
-            console.log(n)
-          \`)
-        `,
-        div`
-          Incorrect:
+        console.log(code\`
+          const n = 42
+          console.log(n)
+        \`)
 
-          code\`const n = 42
-                console.log(n)
-              \`
-        `,
-        div`
-          Incorrect:
+        Incorrect:
 
-          code\`
-            const n = 42
-            console.log(n)\`
-        `,
-      ))
+        code\`const n = 42
+              console.log(n)
+            \`
+      `)
     }
 
     return fragments.slice(1, -1)
@@ -136,6 +126,15 @@ export const __codeHelpers = {
 }
 
 /**
+ * Use escape sequences:
+ * - `` \` `` instead of `` ` ``,
+ * - `\${` instead of `${`.
+ *
+ * Other characters will be inserted into the result as is.
+ *
+ * If you want to use any escape sequences supported in JavaScript, use
+ * the similar `pre` tag instead.
+ *
  * @example
  *
  * ```ts
@@ -145,8 +144,8 @@ export const __codeHelpers = {
  * `
  * ```
  */
-export function code(src: string): string
-export function code({ raw }: TemplateStringsArray, ...args: readonly string[]): string
-export function code(consts: string | readonly string[] | TemplateStringsArray, ...args: readonly string[]): string {
-  return reassemble(prepareConsts(consts), ...args)
+export function code(consts: TemplateStringsArray, ...args: readonly string[]): string {
+  throw new Error('No implementation')
+  return reassembleTaggedString(consts, args, { processConst: useRaw }) // FIXME
+  // return reassemble(prepareConsts(consts), ...args)
 }

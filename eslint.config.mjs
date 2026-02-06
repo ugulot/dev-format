@@ -25,7 +25,7 @@ export default defineConfig(
       '@typescript-eslint/no-explicit-any': ['error', { ignoreRestArgs: true }],
       '@typescript-eslint/no-import-type-side-effects': 'error',
       '@typescript-eslint/no-wrapper-object-types': 'off',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       '@stylistic/comma-dangle': ['error', 'always-multiline'],
       '@stylistic/new-parens': 'off',
       '@stylistic/no-extra-semi': 'error',

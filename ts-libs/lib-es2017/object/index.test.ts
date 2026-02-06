@@ -32,6 +32,9 @@ export const entriesTestCases = [{
 }, {
   args: [[1, 2, 4, 8]],
   expectedResult: [['0', 1], ['1', 2], ['2', 4], ['3', 8]],
+}, {
+  args: [new Set([1, 2, 4, 8])],
+  expectedResult: [],
 }] as const satisfies TestCase[]
 
 describe(`entriesTestCases`, () => {

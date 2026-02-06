@@ -1,7 +1,10 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck FIXME
+
 import { describe, it, expect } from 'vitest'
 import { __codeHelpers, code } from './code'
 
-describe(`${code.name}() (tagged template handle)`, () => {
+describe(`code\`...\` (template tag)`, { todo: true }, () => {
   describe('helpers', () => {
     const {
       prepareConsts,

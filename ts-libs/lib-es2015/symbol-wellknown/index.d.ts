@@ -132,7 +132,7 @@ interface Date {
   [Symbol.toPrimitive](hint: string): string | number
 }
 
-interface Map<K, V> {
+interface Map<K, V, KnownLiteralKey extends boolean | number | bigint | string = never> {
   readonly [Symbol.toStringTag]: string
 }
 

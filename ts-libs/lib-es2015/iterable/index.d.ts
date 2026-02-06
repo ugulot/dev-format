@@ -137,7 +137,7 @@ interface MapIterator<T> extends IteratorObject<T, BuiltinIteratorReturn, unknow
   [Symbol.iterator](): MapIterator<T>
 }
 
-interface Map<K, V> {
+interface Map<K, V, KnownLiteralKey extends boolean | number | bigint | string = never> {
   /** Returns an iterable of entries in the map. */
   [Symbol.iterator](): MapIterator<[K, V]>
 

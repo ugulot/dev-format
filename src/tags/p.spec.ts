@@ -1,8 +1,15 @@
 import { describe, it, expect } from 'vitest'
-import { p } from './p'
+import { p as pTag } from './p'
 
-describe(`${p.name}() (universal tagged template handle)`, () => {
-  it('1) works as tagged template handle', () => {
+describe(`p() the template tag`, () => {
+  const newLineSequence = '\n'
+  const newParagraph = `${newLineSequence}${newLineSequence}`
+  const s = ' '
+  const p = pTag({
+    newLineSequence,
+  })
+
+  it('convert a text into paragraphes', () => {
     expect(p`One two three.`).toBe('One two three.')
 
     expect(p`
@@ -10,28 +17,30 @@ describe(`${p.name}() (universal tagged template handle)`, () => {
       Four five.
     `).toBe('One two three. Four five.')
 
-    expect(p`\t\tOne two three.\n\t\tFour five.`).toBe('One two three. Four five.')
+    expect(p`\t\tOne two three.\n\t\tFour five.`)
+      .toBe('One two three. Four five.')
+
+    expect(p`
+      A1
+      A2
+
+      B1
+      B2
+
+      C1
+
+      D1
+      D2
+    `).toBe(`A1${s}A2${newParagraph}B1${s}B2${newParagraph}C1${newParagraph}D1${s}D2`)
   })
 
-  it('2) just join a lot of strings', () => {
-    expect(p([
-      'One two three.',
-      'Four five.',
-    ])).toBe('One two three. Four five.')
-
-    expect(p(
-      'One two three.',
-      'Four five.',
-    )).toBe('One two three. Four five.')
-  })
-
-  it('skip nullable values', () => {
-    expect(p([
-      'first',
-      null,
-      undefined,
-      'second',
-      'third',
-    ]), 'skip nullable values').toBe('first second third')
+  it('skips nullable values', () => {
+    expect(p`
+      ${undefined}
+      One two ${null} three.
+      ${null}
+      Four ${undefined} five.
+      ${null}
+    `).toBe('One two three. Four five.')
   })
 })

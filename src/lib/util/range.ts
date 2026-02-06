@@ -1,7 +1,4 @@
-import { p } from '@tags/p'
-import { split } from './type/unicode'
-
-export interface RangeOptions<T> {
+export interface RangeOptions {
   /**
    * The absolute value of a step. A sign will be computed based on `start`
    * and `end`
@@ -15,72 +12,6 @@ export interface RangeOptions<T> {
 
   /** @default true */
   endIncluded?: boolean
-
-  valueToNumber?(value: T): number
-
-  numberToValue?(index: number): T
-}
-
-type IndexedValueRangeOptionsVariant<T> = {} | Readonly<{
-  valueToNumber: RangeOptions<T>['valueToNumber']
-  numberToValue: RangeOptions<T>['numberToValue']
-}>
-
-export function defaultValueToNumber<T>(value: T) {
-  if (typeof value === 'number') {
-    return value
-  }
-
-  if (typeof value === 'bigint') {
-    return value
-  }
-
-  if (typeof value === 'string') {
-    const symbols = split(value)
-
-    const zeroCharacters = symbols.length === 0
-    const multipleCharacters = symbols.length >= 2
-
-    if (zeroCharacters || multipleCharacters) {
-      throw new TypeError(p`
-        Element of range should be a string that contains only single Unicode symbol.
-        Combining Unicode characters are not allowed in a range.
-      `)
-    }
-
-    return symbols[0]?.codePointAt(0)
-  }
-
-  if (value instanceof Date) {
-    return +value
-  }
-
-  throw new TypeError(p`
-    An element of the range have unsupportedtype.
-    Use one of supported types by default: number or string contained. Ot 
-  `)
-}
-
-export function defaultNumberToValue<T>(number: number | bigint, type: string | { new (): T }): T {
-  if (type === 'number') {
-    return number
-  }
-
-  if (type === 'bigint') {
-    return number
-  }
-
-  if (type === 'string') {
-    return String.fromCodePoint(number)
-  }
-
-  if (typeof type === 'function' && type === Date) {
-    return new Date(number)
-  }
-
-  throw new TypeError(p`
-    
-  `)
 }
 
 /**
@@ -98,48 +29,33 @@ export function defaultNumberToValue<T>(number: number | bigint, type: string | 
  *
  * @example Range that not includes end value
  * ```
- * console.log([...range(1, 5, { endIncluded: false })])
- * // [1, 2, 3, 4]
- * ```
- *
- * @example Range of Unicode symbols
- * ```
- * console.log([...range('a', 'd')])
- * // ['a', 'b', 'c', 'd']
+ * const array = ['a', 'b', 'c']
+ * console.log([...range(0, array.length, { endIncluded: false })])
+ * // [0, 1, 2]
  * ```
  */
-export function* range<T>(
-  start: T,
-  end: T,
+export function* range(
+  start: number,
+  end: number,
   {
-    step = 1,
-    startIncluded,
-    endIncluded,
-    valueToNumber = defaultValueToNumber<T>,
-    numberToValue = defaultNumberToValue<T>,
-  }: RangeOptions<T> & IndexedValueRangeOptionsVariant<T> = {},
+    step: optionStep = 1,
+    startIncluded = true,
+    endIncluded = true,
+  }: RangeOptions = {},
 ) {
-  const sign = valueToNumber(end) - valueToNumber(start) >= 0 ? 1 : -1
-  const finalStep = sign * Math.abs(step)
+  const sign = start <= end ? 1 : -1
+  const step = sign * Math.abs(optionStep)
 
-  const { constructor } = Object.getPrototypeOf(start)
-  const validateValueClass = (value: T) => {
-    if (Object.getPrototypeOf(value).constructor !== constructor) {
-      throw new TypeError(p`
-        Types of "start" and "end" arguments are mixed.
-      `)
-    }
-  }
+  const endCondition =
+    sign === 1 ?
+      endIncluded ?
+        (n: number) => n <= end :
+        (n: number) => n < end :
+      endIncluded ?
+        (n: number) => n >= end :
+        (n: number) => n > end
 
-  validateValueClass(Object.getPrototypeOf(end).constructor)
-
-  for (
-    let number = valueToNumber(start) + (startIncluded ? 0 : finalStep);
-    sign === -1 ?
-      number >= valueToNumber(end) - (endIncluded ? 0 : finalStep) :
-      number <= valueToNumber(end) - (endIncluded ? 0 : finalStep);
-    number += step
-  ) {
-    yield numberToValue(number)
+  for (let n = startIncluded ? start : start + step; endCondition(n); n += step) {
+    yield n
   }
 }

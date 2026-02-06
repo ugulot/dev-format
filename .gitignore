@@ -140,3 +140,6 @@ vite.config.ts.timestamp-*
 
 # Temporary code
 **/tmp
+
+# Personal temporary TODOs
+TODO.md

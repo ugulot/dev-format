@@ -1,59 +1,66 @@
-import { isNonNullish, type Nullable } from '@lib/util/type/nullable'
-import { reassembleTaggedString } from '@lib/util/type/template-literal'
+import { configurableTag } from '@lib/tag/configurable-tag'
+import {
+  type ReassembleTaggedStringOptions,
+  reassembleTaggedString,
+} from '@lib/util/type/template-literal'
+
+/** Optional whitespace pattern */
+const WS = /\s+/g
+/** Optional whitespace pattern */
+const OWS = /\s*/g
+/** New line pattern */
+const NL = /(?:\r\n|\r|\n)/g
+/** New paragraph pattern */
+const NP = new RegExp(`${OWS.source}${NL.source}${OWS.source}${NL.source}${OWS.source}`, 'g')
+
+const SPACE = '\u0020'
+
+const endWsToS = (string: string) => {
+  const trimmed = string.trimEnd()
+
+  if (string.length === trimmed.length) {
+    return string
+  }
+
+  return trimmed + SPACE
+}
 
 /**
- * This is 1) a tagged template handle and 2) simply a function that make
- * a paragraph from parts, typically sentences.
+ * Process a template string literal as a paragraphes.
  *
- * Works in a similar way to the HTML-code of a block element, such as `<p>`.
+ * This works in a similar way to how paragraphs are processed in Markdown:
  *
- * It converts multiline string with unnecessary indentations into string
- * without line breaks.
+ * - A sequence of whitespace characters containing two or more line breaks
+ * separates the paragraphs. It will be replaced with dobule line breaks.
  *
- * @example
- * ```
- * const text = p`
- *   One two three.
- *   ${null} ${undefined}
- *   Four five.
- * `
- * console.assert(text === 'One two three. Four five.')
- * ```
+ * - Every other sequence of whitespace characters separates parts of paragraph.
+ * It will be replaced with single space.
  *
- * @example
- * ```
- * const text = p(
- *   'One two three.',
- *   'Four five.',
- * )
- * console.assert(text === 'One two three. Four five.')
- * ```
- *
- * @example
- * ```
- * const text = p([
- *   'One two three.',
- *   'Four five.',
- * ])
- * console.assert(text === 'One two three. Four five.')
- * ```
+ * Elements `null` and `undefined` of `args` will be skipped.
  */
-export function p(consts: readonly string[], ...args: readonly Nullable<string>[]): string
-export function p(consts: readonly Nullable<string>[]): string
-export function p(...parts: readonly Nullable<string>[]): string
-export function p(first: readonly Nullable<string>[] | Nullable<string>, ...rest: readonly Nullable<string>[]): string {
-  const SPACE = '\u0020'
+export const p = configurableTag({
+  newLineSequence: '\n',
+}, ({ newLineSequence }, consts, ...args) => {
+  const newParagraphSequence = `${newLineSequence}${newLineSequence}`
 
-  const nonNullishRestStrings = (xs: readonly unknown[]) =>
-    xs.filter(isNonNullish).map(x => String(x))
+  const processArg: ReassembleTaggedStringOptions['processArg'] =
+    arg => `${arg ?? ''}`
 
-  // TODO: refactor
-  const string =
-    typeof first === 'string' ?
-      [first, ...nonNullishRestStrings(rest)].filter(s => s).join(SPACE) :
-    !rest.length ?
-      first?.filter(s => s).join(SPACE) ?? '' :
-      first ? reassembleTaggedString(first.filter(isNonNullish), ...nonNullishRestStrings(rest)) : ''
+  const processConst: ReassembleTaggedStringOptions['processConst'] =
+    (constPart, { i, args }) =>
+      (args[i] ?? '') === '' ?
+        endWsToS(constPart) :
+        constPart
 
-  return string.split(/\n\s*/).join(SPACE).trim()
-}
+  return reassembleTaggedString(consts, args, { processArg, processConst })
+    .trim()
+    .split(NP)
+    .map(paragraph =>
+      paragraph
+        .split(NL)
+        .filter(s => s)
+        .join(newLineSequence)
+        .replaceAll(WS, SPACE),
+    )
+    .join(newParagraphSequence)
+})

@@ -15,7 +15,36 @@ and limitations under the License.
 
 /// <reference no-default-lib="true"/>
 
-interface Map<K, V> {
+/** @internal */
+declare namespace __Utils {
+  type primitive = boolean | number | bigint | string
+
+  type LiteralPrimitive<T> =
+    IsLiteralPrimitive<T> extends true ?
+      T :
+      never
+
+  type IsLiteralPrimitive<T> =
+    T extends boolean ?
+      boolean extends T ?
+        false :
+        true :
+    T extends number ?
+      number extends T ?
+        false :
+        true :
+    T extends bigint ?
+      bigint extends T ?
+        false :
+        true :
+    T extends string ?
+      string extends T ?
+        false :
+        true :
+    false
+}
+
+interface Map<K, V, KnownLiteralKey extends boolean | number | bigint | string = never> {
   clear(): void
   /**
    * @returns true if an element in the Map existed and has been removed, or false if the element does not exist.
@@ -29,11 +58,13 @@ interface Map<K, V> {
    * Returns a specified element from the Map object. If the value that is associated to the provided key is an object, then you will get a reference to that object and any change made to that object will effectively modify it inside the Map.
    * @returns Returns the element associated with the specified key. If no element is associated with the specified key, undefined is returned.
    */
+  get(key: KnownLiteralKey): V
   get(key: K): V | undefined
   /**
    * @returns boolean indicating whether an element with the specified key exists or not.
    */
-  has(key: K): boolean
+  has<LiteralKey extends __Utils.primitive & K>(key: LiteralKey): this is Map<K, V, KnownLiteralKey | LiteralKey>
+  // has(key: K): boolean
   /**
    * Adds a new element with a specified key and value to the Map. If an element with the same key already exists, the element will be updated.
    */
@@ -46,7 +77,7 @@ interface Map<K, V> {
 
 interface MapConstructor {
   new (): Map<any, any>
-  new<K, V>(entries?: readonly (readonly [K, V])[] | null): Map<K, V>
+  new<K, V, KnownLiteralKey extends boolean | number | bigint | string = never>(entries?: readonly (readonly [K, V])[] | null): Map<K, V, KnownLiteralKey>
   readonly prototype: Map<any, any>
 }
 declare var Map: MapConstructor

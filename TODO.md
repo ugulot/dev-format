@@ -1,3 +1,0 @@
-- [] Add ESLint custom rule: v8 ignore comments should have a reson
-  - [] Search it
-  - [] or implement it
