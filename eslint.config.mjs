@@ -15,6 +15,14 @@ export default defineConfig(
   ...tseslint.configs.recommended,
   stylistic.configs.recommended,
   {
+    languageOptions: {
+      /** @type {import('@typescript-eslint/parser').ParserOptions} */
+      parserOptions: {
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+  {
     rules: {
       '@typescript-eslint/consistent-type-imports': ['error', {
         disallowTypeAnnotations: true,
