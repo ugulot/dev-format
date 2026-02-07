@@ -5,8 +5,8 @@ import {
   type ProcessContextArg,
   type ProcessContextConst,
   reassembleTaggedString,
-  useNonNullableArg,
-  useRawConst
+  processNonNullableArg,
+  processRawConst,
 } from './template-literal'
 import { tag } from '@lib/tag/tag'
 
@@ -97,16 +97,16 @@ describe(`${reassembleTaggedString.name}()`, () => {
   })
 })
 
-describe(`${useNonNullableArg.name}()`, () => {
+describe(`${processNonNullableArg.name}()`, () => {
   it('processes nullable arguments as empty string', () => {
     const { consts, args } = disassemble`a${null}b`
-    expect(reassembleTaggedString(consts, args, { processArg: useNonNullableArg })).toStrictEqual('ab')
+    expect(reassembleTaggedString(consts, args, { processArg: processNonNullableArg })).toStrictEqual('ab')
   })
 })
 
-describe(`${useRawConst.name}()`, () => {
+describe(`${processRawConst.name}()`, () => {
   it('processes raw characters of template literal', () => {
     const { consts, args } = disassemble`a\n${'b'}c`
-    expect(reassembleTaggedString(consts, args, { processConst: useRawConst })).toStrictEqual('a\\nbc')
+    expect(reassembleTaggedString(consts, args, { processConst: processRawConst })).toStrictEqual('a\\nbc')
   })
 })

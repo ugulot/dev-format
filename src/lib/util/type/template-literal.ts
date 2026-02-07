@@ -33,10 +33,10 @@ export interface ReassembleTaggedStringOptions<Arg = unknown> {
   readonly processConst?: ProcessConst<Arg>
 }
 
-export const useNonNullableArg: ProcessArg<unknown> =
+export const processNonNullableArg: ProcessArg<unknown> =
   arg => `${arg ?? ''}`
 
-export const useRawConst: ProcessConst =
+export const processRawConst: ProcessConst =
   (_, { raw }) => raw
 
 export function reassembleTaggedString<Arg>(

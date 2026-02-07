@@ -2,7 +2,7 @@ import { configurableTag } from '@lib/tag/configurable-tag'
 import {
   type ProcessConst,
   reassembleTaggedString,
-  useNonNullableArg,
+  processNonNullableArg,
 } from '@lib/util/type/template-literal'
 import { regexp } from './regexp'
 
@@ -58,7 +58,7 @@ export const p = configurableTag({
         constPart
 
   return reassembleTaggedString(consts, args, {
-    processArg: useNonNullableArg,
+    processArg: processNonNullableArg,
     processConst,
   })
     .trim()

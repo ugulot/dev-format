@@ -4,7 +4,7 @@
 import { isArray } from '@lib/util/type/array'
 import {
   reassembleTaggedString,
-  useRawConst,
+  processRawConst,
 } from '@lib/util/type/template-literal'
 import { p } from './p'
 
@@ -149,6 +149,6 @@ export const __codeHelpers = {
  */
 export function code(consts: TemplateStringsArray, ...args: readonly string[]): string {
   throw new Error('No implementation')
-  return reassembleTaggedString(consts, args, { processConst: useRawConst }) // FIXME
+  return reassembleTaggedString(consts, args, { processConst: processRawConst }) // FIXME
   // return reassemble(prepareConsts(consts), ...args)
 }
