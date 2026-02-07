@@ -29,7 +29,6 @@ export interface ProcessConst<Arg = unknown> {
 }
 
 export interface ReassembleTaggedStringOptions<Arg = unknown> {
-  readonly raw?: boolean
   readonly processArg?: ProcessArg<Arg>
   readonly processConst?: ProcessConst<Arg>
 }
