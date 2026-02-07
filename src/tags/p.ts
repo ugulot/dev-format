@@ -28,12 +28,7 @@ const SPACE = '\u0020'
 
 const endWsToS = (string: string) => {
   const trimmed = string.trimEnd()
-
-  if (string.length === trimmed.length) {
-    return string
-  }
-
-  return trimmed + SPACE
+  return string.length === trimmed.length ? string : `${trimmed}${SPACE}`
 }
 
 /**
