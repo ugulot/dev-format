@@ -2,7 +2,10 @@
 // @ts-nocheck FIXME
 
 import { isArray } from '@lib/util/type/array'
-import { reassembleTaggedString, useRaw } from '@lib/util/type/template-literal'
+import {
+  reassembleTaggedString,
+  useRawConst,
+} from '@lib/util/type/template-literal'
 import { p } from './p'
 
 const prepareConsts = (consts: string | readonly string[] | TemplateStringsArray) => {
@@ -146,6 +149,6 @@ export const __codeHelpers = {
  */
 export function code(consts: TemplateStringsArray, ...args: readonly string[]): string {
   throw new Error('No implementation')
-  return reassembleTaggedString(consts, args, { processConst: useRaw }) // FIXME
+  return reassembleTaggedString(consts, args, { processConst: useRawConst }) // FIXME
   // return reassemble(prepareConsts(consts), ...args)
 }

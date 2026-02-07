@@ -2,6 +2,7 @@ import { configurableTag } from '@lib/tag/configurable-tag'
 import {
   type ReassembleTaggedStringOptions,
   reassembleTaggedString,
+  useNonNullableArg,
 } from '@lib/util/type/template-literal'
 import { regexp } from './regexp'
 
@@ -50,16 +51,16 @@ export const p = configurableTag({
   const { WS, NL, NP } = PATTERNS
   const newParagraphSequence = `${newLineSequence}${newLineSequence}`
 
-  const processArg: ReassembleTaggedStringOptions['processArg'] =
-    arg => `${arg ?? ''}`
-
   const processConst: ReassembleTaggedStringOptions['processConst'] =
     (constPart, { i, args }) =>
       (args[i] ?? '') === '' ?
         endWsToS(constPart) :
         constPart
 
-  return reassembleTaggedString(consts, args, { processArg, processConst })
+  return reassembleTaggedString(consts, args, {
+    processArg: useNonNullableArg,
+    processConst,
+  })
     .trim()
     .split(NP)
     .map(paragraph =>
