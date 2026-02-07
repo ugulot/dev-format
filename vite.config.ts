@@ -14,8 +14,10 @@ export default defineConfig({
     },
   },
   test: {
+    include: ['./src/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
     typecheck: {
       enabled: true,
+      include: ['./src/**/*.{test,spec}-d.?(c|m)[jt]s?(x)'],
     },
   },
 })
