@@ -56,7 +56,7 @@ export function reassembleTaggedString<Arg>(
         {
           i,
           get raw() {
-            return this.consts[this.i]
+            return this.consts.raw[this.i]
           },
           consts,
           args,
