@@ -20,16 +20,24 @@ export interface ProcessContextConst<Arg> extends ProcessContext<Arg> {
   readonly raw: string
 }
 
-export interface ReassembleTaggedStringOptions<Arg = unknown> {
-  readonly raw?: boolean
-  readonly processArg?: (arg: Arg, context: ProcessContextArg<Arg>) => string
-  readonly processConst?: (constPart: string, context: ProcessContextConst<Arg>) => string
+export interface ProcessArg<Arg> {
+  (arg: Arg, context: ProcessContextArg<Arg>): string
 }
 
-export const useNonNullableArg: ReassembleTaggedStringOptions['processArg'] =
+export interface ProcessConst<Arg = unknown> {
+  (constPart: string, context: ProcessContextConst<Arg>): string
+}
+
+export interface ReassembleTaggedStringOptions<Arg = unknown> {
+  readonly raw?: boolean
+  readonly processArg?: ProcessArg<Arg>
+  readonly processConst?: ProcessConst<Arg>
+}
+
+export const useNonNullableArg: ProcessArg<unknown> =
   arg => `${arg ?? ''}`
 
-export const useRawConst: ReassembleTaggedStringOptions['processConst'] =
+export const useRawConst: ProcessConst =
   (_, { raw }) => raw
 
 export function reassembleTaggedString<Arg>(

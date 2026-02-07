@@ -1,6 +1,6 @@
 import { configurableTag } from '@lib/tag/configurable-tag'
 import {
-  type ReassembleTaggedStringOptions,
+  type ProcessConst,
   reassembleTaggedString,
   useNonNullableArg,
 } from '@lib/util/type/template-literal'
@@ -51,7 +51,7 @@ export const p = configurableTag({
   const { WS, NL, NP } = PATTERNS
   const newParagraphSequence = `${newLineSequence}${newLineSequence}`
 
-  const processConst: ReassembleTaggedStringOptions['processConst'] =
+  const processConst: ProcessConst =
     (constPart, { i, args }) =>
       (args[i] ?? '') === '' ?
         endWsToS(constPart) :

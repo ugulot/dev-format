@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { reassembleTaggedString, type ReassembleTaggedStringOptions } from './template-literal'
+import {
+  type ProcessArg,
+  reassembleTaggedString
+} from './template-literal'
 import { tag } from '@lib/tag/tag'
 
 describe(`${reassembleTaggedString.name}()`, () => {
@@ -24,14 +27,14 @@ describe(`${reassembleTaggedString.name}()`, () => {
 
   it('option "processArg" allows to replace argument based on the context', () => {
     {
-      const processArg: ReassembleTaggedStringOptions['processArg'] =
+      const processArg: ProcessArg<unknown> =
         arg => `${arg ?? ''}`
       const { consts, args } = disassemble`ab${123}cd${456}ef${null}gh${undefined}ij`
       expect(reassembleTaggedString(consts, args, { processArg })).toStrictEqual('ab123cd456efghij')
     }
 
     {
-      const processArg: ReassembleTaggedStringOptions['processArg'] =
+      const processArg: ProcessArg<unknown> =
         (arg, { i, consts }) => consts[i]?.endsWith('@') ? String(arg ?? '').toLowerCase() : String(arg ?? '')
 
       const userName = 'Alex123'
