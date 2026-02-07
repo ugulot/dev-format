@@ -25,11 +25,10 @@ export function configurableTag<
 
   function tag(consts: TemplateStringsArray, ...args: Args): Returned
   function tag(options: Options): Tag<Args, Returned>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function tag(firstArg: any, ...restArgs: any) {
+  function tag(firstArg: TemplateStringsArray | Options, ...restArgs: Args | readonly never[]) {
     if (isTemplateStringsArray(firstArg)) {
       const consts = firstArg
-      const args = restArgs
+      const args = restArgs as Args
 
       return handle(options, consts, ...args)
     }
