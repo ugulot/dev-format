@@ -42,7 +42,7 @@ const endWsToS = (string: string) => {
  * - Every other sequence of whitespace characters separates parts of paragraph.
  * It will be replaced with single space.
  *
- * Elements `null` and `undefined` of `args` will be skipped.
+ * `null`, and `undefined`, and `''` of `args` will be skipped.
  */
 export const p = configurableTag({
   newLineSequence: '\n',
