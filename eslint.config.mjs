@@ -33,11 +33,16 @@ export default defineConfig(
       '@typescript-eslint/no-explicit-any': ['error', { ignoreRestArgs: true }],
       '@typescript-eslint/no-import-type-side-effects': 'error',
       '@typescript-eslint/no-wrapper-object-types': 'off',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': ['error', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+      }],
       '@stylistic/comma-dangle': ['error', 'always-multiline'],
       '@stylistic/new-parens': 'off',
       '@stylistic/no-extra-semi': 'error',
-      '@stylistic/no-extra-parens': ['error', 'all', { conditionalAssign: false }],
+      '@stylistic/no-extra-parens': ['error', 'all', {
+        conditionalAssign: false,
+      }],
       '@stylistic/no-mixed-operators': 'off',
       '@stylistic/generator-star-spacing': ['error', {
         before: false,
@@ -45,8 +50,12 @@ export default defineConfig(
         anonymous: 'neither',
         method: { before: true, after: false },
       }],
-      '@stylistic/operator-linebreak': ['error', 'before', { overrides: { '=': 'after', '?': 'after', ':': 'after' } }],
-      '@stylistic/indent': ['error', 2, { ignoredNodes: ['ConditionalExpression', 'TSConditionalType'] }],
+      '@stylistic/operator-linebreak': ['error', 'before', {
+        overrides: { '=': 'after', '?': 'after', ':': 'after' },
+      }],
+      '@stylistic/indent': ['error', 2, {
+        ignoredNodes: ['ConditionalExpression', 'TSConditionalType'],
+      }],
     },
   },
 )
