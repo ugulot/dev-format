@@ -24,6 +24,18 @@ export default defineConfig(
   },
   {
     rules: {
+      'prefer-const': ['warn'], // conflicts with enabled autofix on save in IDE
+      /*
+        TODO research: is there way to make "prefer-const" dependent on "no-unused-vars"
+
+        idea: "prefer-const" works only after
+
+        prefer-const
+        https://eslint.org/docs/latest/rules/prefer-const
+
+        @typescript-eslint/no-unused-vars
+        https://typescript-eslint.io/rules/no-unused-vars
+      */
       '@typescript-eslint/consistent-type-imports': ['error', {
         disallowTypeAnnotations: true,
         fixStyle: 'inline-type-imports',
