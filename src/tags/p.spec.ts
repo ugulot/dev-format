@@ -4,10 +4,7 @@ import { p as pTag } from './p'
 describe(`p() the template tag`, () => {
   const newLineSequence = '\n'
   const newParagraph = `${newLineSequence}${newLineSequence}`
-  const s = ' '
-  const p = pTag({
-    newLineSequence,
-  })
+  const p = pTag({ newLineSequence })
 
   it('convert a text into paragraphes', () => {
     expect(p`One two three.`).toBe('One two three.')
@@ -16,6 +13,15 @@ describe(`p() the template tag`, () => {
       One two three.
       Four five.
     `).toBe('One two three. Four five.')
+
+    expect(p`
+      One two three.
+
+      Four five.
+    `).toBe([
+      'One two three.',
+      'Four five.',
+    ].join(newParagraph))
 
     expect(p`\t\tOne two three.\n\t\tFour five.`)
       .toBe('One two three. Four five.')
@@ -31,16 +37,70 @@ describe(`p() the template tag`, () => {
 
       D1
       D2
-    `).toBe(`A1${s}A2${newParagraph}B1${s}B2${newParagraph}C1${newParagraph}D1${s}D2`)
+    `).toBe([
+      'A1 A2',
+      'B1 B2',
+      'C1',
+      'D1 D2',
+    ].join(newParagraph))
   })
 
   it('skips nullable values', () => {
-    expect(p`
-      ${undefined}
-      One two ${null} three.
-      ${null}
-      Four ${undefined} five.
-      ${null}
-    `).toBe('One two three. Four five.')
+    for (const nullable of [null, undefined, '']) {
+      expect(p`
+        One.
+        
+        ${nullable}
+      `).toBe('One.')
+
+      expect(p`
+        One.
+        ${nullable}
+      `).toBe('One.')
+
+      expect(p`
+        ${nullable}
+        
+        One.
+      `).toBe('One.')
+
+      expect(p`
+        ${nullable}
+        One.
+      `).toBe('One.')
+
+      expect(p`
+        One.
+        
+        ${nullable}
+
+        Two. ${nullable} Two-two. ${nullable}${nullable} ${nullable} Two-two-two.
+
+        ${nullable}
+        ${nullable}
+        
+        Three.
+        ${nullable}
+        Three-three.
+        
+        ${nullable}
+
+        ${nullable}
+        
+        ${nullable}
+        ${nullable}
+        
+        Four.
+        Four-four.
+
+        Five.
+      `).toBe([
+        'One.',
+        'Two. Two-two. Two-two-two.',
+        'Three. Three-three.',
+        'Four. Four-four.',
+        'Five.',
+      ].join(newParagraph))
+    }
   })
 })
