@@ -1,35 +1,15 @@
 import { configurableTag } from '@lib/tag/configurable-tag'
+import { ASCII, PLAIN_TEXT, SEQUENCES } from '@lib/util/text/characters'
 import {
   type ProcessConst,
   reassembleTaggedString,
   processNonNullableArg,
 } from '@lib/util/type/template-literal'
-import { regexp } from './regexp'
-
-const PATTERNS = {
-  /** Optional whitespace pattern */
-  WS: /\s+/g,
-
-  /** Optional whitespace pattern */
-  OWS: /\s*/g,
-
-  /** New line pattern */
-  NL: /(?:\r\n|\r|\n)/g,
-
-  /** New paragraph pattern */
-  get NP() {
-    // a getter is necessary because "p" and "regexp" are cyclically dependent
-    // on each other
-    const { OWS, NL } = this
-    return regexp({ flags: 'g' })`${OWS}${NL}${OWS}${NL}${OWS}`
-  },
-}
-
-const SPACE = '\u0020'
 
 const endWsToS = (string: string) => {
+  const { S } = ASCII
   const trimmed = string.trimEnd()
-  return string.length === trimmed.length ? string : `${trimmed}${SPACE}`
+  return string.length === trimmed.length ? string : `${trimmed}${S}`
 }
 
 /**
@@ -48,7 +28,9 @@ const endWsToS = (string: string) => {
 export const p = configurableTag({
   newLineSequence: '\n',
 }, ({ newLineSequence }, consts, ...args) => {
-  const { WS, NL, NP } = PATTERNS
+  const { S } = ASCII
+  const { NP } = PLAIN_TEXT
+  const { WS, EOL } = SEQUENCES
   const newParagraphSequence = `${newLineSequence}${newLineSequence}`
 
   const processConst: ProcessConst =
@@ -65,10 +47,10 @@ export const p = configurableTag({
     .split(NP)
     .map(paragraph =>
       paragraph
-        .split(NL)
+        .split(EOL)
         .filter(s => s)
         .join(newLineSequence)
-        .replaceAll(WS, SPACE),
+        .replaceAll(WS, S),
     )
     .join(newParagraphSequence)
 })
