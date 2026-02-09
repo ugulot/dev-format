@@ -1,87 +1,75 @@
 import { configurableTag } from '@lib/tag/configurable-tag'
-import { reassembleTaggedString, processNonNullableArg } from '@lib/util/type/template-literal'
+import { ASCII, SEQUENCES } from '@lib/util/text/characters'
+import {
+  reassembleTaggedString,
+  processNonNullableArg,
+} from '@lib/util/type/template-literal'
+import { p } from './p'
+import { regexp } from './regexp'
 
-export interface PreOptions {
-  trim?: boolean
+const isEmpty = (line: string) => {
+  const { S, TAB } = ASCII
+  return regexp`^[${S}${TAB}]*$`.test(line)
 }
 
-const lineBreakPattern = /\r\n|\r|\n/
+const indentProperites = (line: string) => {
+  const { S, TAB } = ASCII
 
-const commonPrefix = (a: string, b: string) => {
-  const max = Math.min(a.length, b.length)
-  let i = 0
+  const MAYBE_MIXED_SPACES_OR_TABS_INDENT =
+    regexp`^(${S}*|${TAB}*)([${S}${TAB}]*)`
 
-  while (i < max && a[i] === b[i]) {
-    i++
+  const [_, indent = '', unexpectedOtherTypeIndent = ''] =
+    MAYBE_MIXED_SPACES_OR_TABS_INDENT.exec(line)!
+
+  return {
+    indent,
+    mixedIndent: Boolean(unexpectedOtherTypeIndent.length),
   }
-
-  return a.slice(0, i)
-}
-
-const trimOuterBlankLines = (lines: string[]) => {
-  let start = 0
-  let end = lines.length
-
-  while (start < end && /^\s*$/.test(lines[start]!)) {
-    start++
-  }
-
-  while (end > start && /^\s*$/.test(lines[end - 1]!)) {
-    end--
-  }
-
-  return lines.slice(start, end)
-}
-
-const removeCommonIndent = (lines: string[]) => {
-  let commonIndent: string | undefined
-
-  for (const line of lines) {
-    if (!line.trim()) {
-      continue
-    }
-
-    const indent = line.match(/^[ \t]*/)?.[0] ?? ''
-    commonIndent = commonIndent === undefined ? indent : commonPrefix(commonIndent, indent)
-
-    if (commonIndent === '') {
-      break
-    }
-  }
-
-  return lines.map((line) => {
-    if (!line.trim()) {
-      return ''
-    }
-
-    if (commonIndent && line.startsWith(commonIndent)) {
-      return line.slice(commonIndent.length)
-    }
-
-    return line
-  })
 }
 
 export const pre = configurableTag({
-  trim: true,
-}, ({ trim }, consts, ...args) => {
+  newLineSequence: '\n',
+}, ({ newLineSequence }, consts, ...args) => {
+  const { EOL } = SEQUENCES
+
   const text = reassembleTaggedString(consts, args, {
     processArg: processNonNullableArg,
   })
-  const lineBreakMatch = lineBreakPattern.exec(text)
+  const lines = text.split(EOL)
 
-  if (!lineBreakMatch) {
-    return text
+  if (lines.length < 3 || !isEmpty(lines[0]!) || !isEmpty(lines.at(-1)!)) {
+    throw new SyntaxError(pre`
+      Using of tag pre\`...\` should looks like this:
+
+      pre\`
+        ...
+      \`
+
+      First and last lines should be empty.
+    `)
   }
 
-  const lineBreak = lineBreakMatch[0]
-  let lines = text.split(lineBreakPattern)
+  const contentLines = lines.slice(1, -1)
 
-  if (trim) {
-    lines = trimOuterBlankLines(lines)
+  let minIndentLength: number
+
+  for (const line of contentLines) {
+    const {
+      indent,
+      mixedIndent,
+    } = indentProperites(line)
+
+    // @ts-expect-error Variable 'minIndentLength' is used before being assigned. ts(2454)
+    minIndentLength = Math.min(indent.length, minIndentLength ?? Infinity)
+
+    if (mixedIndent) {
+      throw new SyntaxError(p`
+        Content should be indented using spaces only or tabs only.
+      `)
+    }
   }
 
-  lines = removeCommonIndent(lines)
-
-  return lines.join(lineBreak)
+  return contentLines
+    .map(line => line.slice(minIndentLength))
+    .join(newLineSequence)
 })
