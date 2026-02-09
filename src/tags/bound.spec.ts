@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { bound } from './bound'
 
-describe(`${bound.name}()`, () => {
+describe(`bound\`...\``, () => {
   it('allows to insert optional argument in a template literal without conditions', () => {
     const hello = (name?: string) => `Hello${bound`, ${name}`}!`
 

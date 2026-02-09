@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { p as pTag } from './p'
 
-describe(`p() the template tag`, () => {
+describe(`p\`...\``, () => {
   const newLineSequence = '\n'
   const newParagraph = `${newLineSequence}${newLineSequence}`
   const p = pTag({ newLineSequence })

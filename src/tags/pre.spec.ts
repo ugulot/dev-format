@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { pre } from './pre'
 
-describe(`${pre.name}() the template tag`, () => {
-  it('removes common indentation and keeps inner indentation', () => {
+describe(`pre\`...\` the template tag`, () => {
+  it('removes outer and keeps inner indentation', () => {
     expect(pre`
       first
         second

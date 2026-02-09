@@ -4,7 +4,7 @@
 import { describe, it, expect } from 'vitest'
 import { __codeHelpers, code } from './code'
 
-describe(`code\`...\` (template tag)`, { todo: true }, () => {
+describe(`code\`...\``, { todo: true }, () => {
   describe('helpers', () => {
     const {
       prepareConsts,
