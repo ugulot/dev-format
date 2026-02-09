@@ -51,8 +51,7 @@ export const SEQUENCES = {
 export const PLAIN_TEXT = {
   /** New paragraph */
   get NP() {
-    // getter is necessary because "p" and "regexp" are cyclically dependent
-    // on each other ??? FIXME
+    // getter-design is necessary to resolve cyclic dependencies with regexp
     const { OWS, EOL } = SEQUENCES
     return regexp({ flags: 'g' })`${OWS}${EOL}${OWS}${EOL}${OWS}`
   },
