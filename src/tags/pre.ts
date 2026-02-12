@@ -1,4 +1,4 @@
-import { configurableTag } from '@lib/tag/configurable-tag'
+import { ConfigurableTag } from '@lib/tag/ConfigurableTag'
 import { ASCII, SEQUENCES } from '@lib/util/text/characters'
 import {
   reassembleTaggedString,
@@ -27,7 +27,7 @@ const indentProperites = (line: string) => {
   }
 }
 
-export const pre = configurableTag({
+export const pre = ConfigurableTag({
   newLineSequence: '\n',
 }, ({ newLineSequence }, consts, ...args) => {
   const { EOL } = SEQUENCES

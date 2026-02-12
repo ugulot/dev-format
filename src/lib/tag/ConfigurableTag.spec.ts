@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { configurableTag } from './configurable-tag'
+import { ConfigurableTag } from './ConfigurableTag'
 import { reassembleTaggedString } from '@lib/util/type/template-literal'
 
-describe(`${configurableTag.name}()`, () => {
-  const tag = configurableTag({
+describe(`${ConfigurableTag.name}()`, () => {
+  const tag = ConfigurableTag({
     digitsOnly: false,
   }, ({ digitsOnly }, consts, ...args) => {
     const result = reassembleTaggedString(consts, args)

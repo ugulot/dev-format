@@ -8,9 +8,9 @@ import {
   processNonNullableArg,
   processRawConst,
 } from './template-literal'
-import { tag } from '@lib/tag/tag'
+import { Tag } from '@lib/tag/Tag'
 
-const disassemble = tag((consts, ...args) => ({ consts, args }))
+const disassemble = Tag((consts, ...args) => ({ consts, args }))
 
 describe(`${reassembleTaggedString.name}()`, () => {
   it('assemble simple ', () => {
@@ -67,7 +67,7 @@ describe(`${reassembleTaggedString.name}()`, () => {
   })
 
   it('option "processConst" allows to replace constant part based on the context', () => {
-    const uppercase = tag((consts, ...args) => {
+    const uppercase = Tag((consts, ...args) => {
       return reassembleTaggedString(consts, args, {
         processConst: constPart => constPart.toUpperCase(),
       })

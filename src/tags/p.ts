@@ -1,4 +1,4 @@
-import { configurableTag } from '@lib/tag/configurable-tag'
+import { ConfigurableTag } from '@lib/tag/ConfigurableTag'
 import { ASCII, PLAIN_TEXT, SEQUENCES } from '@lib/util/text/characters'
 import {
   type ProcessConst,
@@ -25,7 +25,7 @@ const endWsToS = (string: string) => {
  *
  * `null`, and `undefined`, and `''` of `args` will be skipped.
  */
-export const p = configurableTag({
+export const p = ConfigurableTag({
   newLineSequence: '\n',
 }, ({ newLineSequence }, consts, ...args) => {
   const { S } = ASCII

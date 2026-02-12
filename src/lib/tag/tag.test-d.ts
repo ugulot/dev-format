@@ -1,5 +1,5 @@
 import { describe, it } from 'vitest'
-import type { Tag } from './tag'
+import type { Tag } from './Tag'
 
 describe('interface Tag', () => {
   it('describes a tag for template literal', () => {

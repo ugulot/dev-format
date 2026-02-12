@@ -1,4 +1,4 @@
-import { tag } from '@lib/tag/tag'
+import { Tag } from '@lib/tag/Tag'
 
 /**
  * Bind constant text to an optional argument.
@@ -11,7 +11,7 @@ import { tag } from '@lib/tag/tag'
  * console.assert(hello('Alex') === 'Hello, Alex!')
  * ```
  */
-export const bound = tag(([before = '', after = ''], arg) => {
+export const bound = Tag(([before = '', after = ''], arg) => {
   if (arg === '' || arg === null || arg === undefined) {
     return ''
   }

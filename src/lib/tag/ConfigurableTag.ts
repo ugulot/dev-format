@@ -1,4 +1,4 @@
-import type { Tag } from './tag'
+import type { Tag } from './Tag'
 import {
   type NonTemplateStringsArray,
   isTemplateStringsArray,
@@ -13,7 +13,7 @@ export interface ConfigurableTag<
   (options: NonTemplateStringsArray<Options>): Tag<Args, Returned>
 }
 
-export function configurableTag<
+export function ConfigurableTag<
   const Args extends readonly unknown[],
   Returned,
   const Options extends object,

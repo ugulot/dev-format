@@ -1,5 +1,5 @@
 import escape from 'core-js-pure/es/regexp/escape'
-import { configurableTag } from '@lib/tag/configurable-tag'
+import { ConfigurableTag } from '@lib/tag/ConfigurableTag'
 import { reassembleTaggedString } from '@lib/util/type/template-literal'
 import { p } from './p'
 
@@ -11,7 +11,7 @@ const FLAGS_AFFECTING_SYNTAX = Object.freeze(new Set([
   'v',
 ]))
 
-export const regexp = configurableTag({
+export const regexp = ConfigurableTag({
   flags: '',
 }, ({ flags }, consts, ...args) => {
   const pattern = reassembleTaggedString(consts, args, {

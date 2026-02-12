@@ -12,7 +12,7 @@ export interface Tag<
  * Wrap a tag for [tagged templates](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#tagged_templates)
  * to get better type inference.
  */
-export function tag<
+export function Tag<
   const Args extends readonly unknown[],
   const Returned,
 >(handle: Tag<Args, Returned>) {
