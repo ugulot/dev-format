@@ -1,4 +1,3 @@
-import type { Tag } from './Tag'
 import {
   type NonTemplateStringsArray,
   isTemplateStringsArray,
@@ -10,22 +9,30 @@ export interface ConfigurableTag<
   Options = {},
 > {
   (consts: TemplateStringsArray, ...args: Args): Returned
-  (options: NonTemplateStringsArray<Options>): Tag<Args, Returned>
+  <const OverridedOptions extends Options>(
+    options: NonTemplateStringsArray<OverridedOptions>
+  ): ConfigurableTag<Args, Returned, OverridedOptions>
+}
+
+export function ConfigurableTagOptions<const Options extends {}>(options: NonTemplateStringsArray<Options>) {
+  return options
 }
 
 export function ConfigurableTag<
   const Args extends readonly unknown[],
   Returned,
-  const Options extends object,
+  const Options extends {},
 >(
   options: NonTemplateStringsArray<Options>,
   handle: (options: Options, consts: TemplateStringsArray, ...args: Args) => Returned,
 ): ConfigurableTag<Args, Returned, Options> {
-  return tag
+  return ReconfigurableTag
 
-  function tag(consts: TemplateStringsArray, ...args: Args): Returned
-  function tag(options: Options): Tag<Args, Returned>
-  function tag(firstArg: TemplateStringsArray | Options, ...restArgs: Args | readonly never[]) {
+  function ReconfigurableTag(consts: TemplateStringsArray, ...args: Args): Returned
+  function ReconfigurableTag<const OverridedOptions extends Options>(
+    options: NonTemplateStringsArray<OverridedOptions>,
+  ): ConfigurableTag<Args, Returned, OverridedOptions>
+  function ReconfigurableTag(firstArg: TemplateStringsArray | Options, ...restArgs: Args | readonly never[]) {
     if (isTemplateStringsArray(firstArg)) {
       const consts = firstArg
       const args = restArgs as Args
@@ -33,11 +40,9 @@ export function ConfigurableTag<
       return handle(options, consts, ...args)
     }
     else {
-      const options = firstArg
-      const tag = (consts: TemplateStringsArray, ...args: Args) =>
-        handle(options, consts, ...args)
+      const overridedOptions = firstArg
 
-      return tag
+      return ConfigurableTag({ ...options, ...overridedOptions }, handle)
     }
   }
 }
