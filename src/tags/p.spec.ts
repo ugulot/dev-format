@@ -1,10 +1,11 @@
 import { describe, it, expect } from 'vitest'
 import { p as pTag } from './p'
+import { newLineSequenceKey } from '@lib/tag/reusable/options/newLineSequence'
 
 describe(`p\`...\``, () => {
   const newLineSequence = '\n'
   const newParagraph = `${newLineSequence}${newLineSequence}`
-  const p = pTag({ newLineSequence })
+  const p = pTag({ [newLineSequenceKey]: newLineSequence })
 
   it('convert a text into paragraphes', () => {
     expect(p`One two three.`).toBe('One two three.')

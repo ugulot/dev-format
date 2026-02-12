@@ -1,4 +1,5 @@
 import { ConfigurableTag } from '@lib/tag/ConfigurableTag'
+import { newLineSequenceDefaultOptions, newLineSequenceKey } from '@lib/tag/reusable/options/newLineSequence'
 import { ASCII, PLAIN_TEXT, SEQUENCES } from '@lib/util/text/characters'
 import {
   type ProcessConst,
@@ -26,8 +27,8 @@ const endWsToS = (string: string) => {
  * `null`, and `undefined`, and `''` of `args` will be skipped.
  */
 export const p = ConfigurableTag({
-  newLineSequence: '\n',
-}, ({ newLineSequence }, consts, ...args) => {
+  ...newLineSequenceDefaultOptions,
+}, ({ [newLineSequenceKey]: newLineSequence }, consts, ...args) => {
   const { S } = ASCII
   const { NP } = PLAIN_TEXT
   const { WS, EOL } = SEQUENCES

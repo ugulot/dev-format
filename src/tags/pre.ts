@@ -6,6 +6,7 @@ import {
 } from '@lib/util/type/template-literal'
 import { p } from './p'
 import { regexp } from './regexp'
+import { newLineSequenceKey, newLineSequenceDefaultOptions } from '@lib/tag/reusable/options/newLineSequence'
 
 const isEmpty = (line: string) => {
   const { S, TAB } = ASCII
@@ -28,8 +29,8 @@ const indentProperites = (line: string) => {
 }
 
 export const pre = ConfigurableTag({
-  newLineSequence: '\n',
-}, ({ newLineSequence }, consts, ...args) => {
+  ...newLineSequenceDefaultOptions,
+}, ({ [newLineSequenceKey]: newLineSequence }, consts, ...args) => {
   const { EOL } = SEQUENCES
 
   const text = reassembleTaggedString(consts, args, {
