@@ -9,7 +9,7 @@ const FLAGS_AFFECTING_SYNTAX = Object.freeze(new Set([
   's',
   'u',
   'v',
-]))
+] as const))
 
 export const regexp = ConfigurableTag({
   flags: '',
