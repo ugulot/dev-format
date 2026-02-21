@@ -79,7 +79,7 @@ interface Map<K, V> {
   /**
    * @returns boolean indicating whether an element with the specified key exists or not.
    */
-  has(key: K): boolean
+  has(key: __Utils.LiteralPrimitive<K> extends never ? K : __Utils.TypeOfLiteral<K>): boolean
   /**
    * Adds a new element with a specified key and value to the Map. If an element with the same key already exists, the element will be updated.
    */
@@ -100,7 +100,7 @@ declare var Map: MapConstructor
 interface ReadonlyMap<K, V> {
   forEach(callbackfn: (value: V, key: K, map: ReadonlyMap<K, V>) => void, thisArg?: any): void
   get(key: K): V | undefined
-  has(key: K): boolean
+  has(key: __Utils.LiteralPrimitive<K> extends never ? K : __Utils.TypeOfLiteral<K>): boolean
   readonly size: number
 }
 
