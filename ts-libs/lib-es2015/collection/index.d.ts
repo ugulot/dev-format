@@ -165,7 +165,7 @@ declare var Set: SetConstructor
 
 interface ReadonlySet<T> {
   forEach(callbackfn: (value: T, value2: T, set: ReadonlySet<T>) => void, thisArg?: any): void
-  has(value: T): boolean
+  has(value: __Utils.LiteralPrimitive<T> extends never ? T : __Utils.TypeOfLiteral<T>): boolean
   readonly size: number
 }
 
