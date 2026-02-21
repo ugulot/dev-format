@@ -13,9 +13,9 @@ describe(`${stringify.name}()`, () => {
 
   test('make sure that different input makes different output', () => {
     class SameResultVariants<T> extends Array<T> {}
-    type DifferentRresultVariants<T> = (T | SameResultVariants<T>)[]
+    type DifferentResultVariants<T> = (T | SameResultVariants<T>)[]
 
-    const valueVariants: DifferentRresultVariants<unknown> = [
+    const valueVariants: DifferentResultVariants<unknown> = [
       undefined,
       null,
       ...withObjectWrapper([
