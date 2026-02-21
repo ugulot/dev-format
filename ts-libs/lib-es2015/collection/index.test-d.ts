@@ -28,7 +28,9 @@ describe(`interface Set`, () => {
     it('check values of same internal type (number or bigint or string) when type of element narrowed to union of literal primitives', () => {
       const set = new Set(['a', 'b', 'c'] as const)
 
-      // Fix wishful standard behavior:
+      /*
+        Fix wishful standard behavior:
+      */
       set.has('a')
       // @ts-expect-error Value of another type
       set.has(true)
@@ -41,7 +43,9 @@ describe(`interface Set`, () => {
       // @ts-expect-error Value of another type
       set.has(new Function)
 
-      // In the standard library causes an error, but it shouldn't:
+      /*
+        In the standard library causes an error, but it shouldn't:
+      */
       set.has('z')
       set.has('z' as string)
     })
@@ -53,7 +57,9 @@ describe(`interface ReadonlySet`, () => {
     it('check values of same internal type (number or bigint or string) when type of element narrowed to union of literal primitives', () => {
       const set = Object.freeze(new Set(['a', 'b', 'c'] as const))
 
-      // Fix wishful standard behavior:
+      /*
+        Fix wishful standard behavior:
+      */
       set.has('a')
       // @ts-expect-error Value of another type
       set.has(true)
@@ -66,7 +72,9 @@ describe(`interface ReadonlySet`, () => {
       // @ts-expect-error Value of another type
       set.has(new Function)
 
-      // In the standard library causes an error, but it shouldn't:
+      /*
+        In the standard library causes an error, but it shouldn't:
+      */
       set.has('z')
       set.has('z' as string)
     })
@@ -82,7 +90,9 @@ describe(`interface Map`, () => {
         ['c', 3],
       ] as const)
 
-      // Fix wishful standard behavior:
+      /*
+        Fix wishful standard behavior:
+      */
       map.has('a')
       // @ts-expect-error Value of another type
       map.has(true)
@@ -95,7 +105,9 @@ describe(`interface Map`, () => {
       // @ts-expect-error Value of another type
       map.has(new Function)
 
-      // In the standard library causes an error, but it shouldn't:
+      /*
+        In the standard library causes an error, but it shouldn't:
+      */
       map.has('z')
       map.has('z' as string)
     })
@@ -111,7 +123,9 @@ describe(`interface ReadonlyMap`, () => {
         ['c', 3],
       ] as const))
 
-      // Fix wishful standard behavior:
+      /*
+        Fix wishful standard behavior:
+      */
       map.has('a')
       // @ts-expect-error Value of another type
       map.has(true)
@@ -124,7 +138,9 @@ describe(`interface ReadonlyMap`, () => {
       // @ts-expect-error Value of another type
       map.has(new Function)
 
-      // In the standard library causes an error, but it shouldn't:
+      /*
+        In the standard library causes an error, but it shouldn't:
+      */
       map.has('z')
       map.has('z' as string)
     })
