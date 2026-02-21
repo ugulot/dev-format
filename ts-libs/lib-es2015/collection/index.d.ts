@@ -17,18 +17,35 @@ and limitations under the License.
 
 /** @internal */
 declare namespace __Utils {
-  type primitive = boolean | number | bigint | string
+  type primitiveWithInnumerableLiterals = number | bigint | string
 
   type LiteralPrimitive<T> =
-    IsLiteralPrimitive<T> extends true ?
-      T :
+    T extends primitiveWithInnumerableLiterals ?
+      IsLiteralPrimitive<T> extends true ?
+        T :
+        never :
       never
 
-  type IsLiteralPrimitive<T> =
-    T extends boolean ?
-      boolean extends T ?
-        false :
-        true :
+  type TypeOfLiteral<T> =
+    T extends primitiveWithInnumerableLiterals ?
+      T extends number ?
+        number :
+      T extends bigint ?
+        bigint :
+      T extends string ?
+        string :
+      T extends number | bigint ?
+        number | bigint :
+      T extends number | string ?
+        number | string :
+      T extends bigint | string ?
+        bigint | string :
+      T extends number | bigint | string ?
+        number | bigint | string :
+        never :
+      never
+
+  type IsLiteralPrimitive<T extends primitiveWithInnumerableLiterals> =
     T extends number ?
       number extends T ?
         false :
@@ -63,7 +80,7 @@ interface Map<K, V, KnownLiteralKey extends boolean | number | bigint | string =
   /**
    * @returns boolean indicating whether an element with the specified key exists or not.
    */
-  has<LiteralKey extends __Utils.primitive & K>(key: LiteralKey): this is Map<K, V, KnownLiteralKey | LiteralKey>
+  has<LiteralKey extends __Utils.primitiveWithInnumerableLiterals & K>(key: LiteralKey): this is Map<K, V, KnownLiteralKey | LiteralKey>
   // has(key: K): boolean
   /**
    * Adds a new element with a specified key and value to the Map. If an element with the same key already exists, the element will be updated.
@@ -135,7 +152,7 @@ interface Set<T> {
   /**
    * @returns a boolean indicating whether an element with the specified value exists in the Set or not.
    */
-  has(value: T): boolean
+  has(value: __Utils.LiteralPrimitive<T> extends never ? T : __Utils.TypeOfLiteral<T>): boolean
   /**
    * @returns the number of (unique) elements in Set.
    */
